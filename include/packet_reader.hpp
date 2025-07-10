@@ -39,7 +39,7 @@ namespace packet_io
 		void read_raw(void* data, std::size_t size);
 
 
-		std::span<std::byte> _buffer;
+		std::span<const std::byte> _buffer;
 		size_t _offset;
 		size_t _length;
 	};
