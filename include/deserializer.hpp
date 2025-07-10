@@ -6,33 +6,46 @@
 #define DESERIALIZER_HPP
 
 #include <optional>
+#include <type_traits>
 
 namespace packet_io
 {
 	class packet_reader;
 }
 
-namespace packet_io {
-	enum class deserialize_result {
-		success,            // Deserialization succeeded
-		invalid_data,       // Data is invalid (wrong format, validation failed, etc.)
-		insufficient_data   // Need more bytes in buffer
+namespace packet_io
+{
+	enum class deserialize_result
+	{
+		success,
+		invalid_data,
+		insufficient_data
 	};
 
-	template<typename T>
-	struct deserialize_state {
+	template <typename T>
+	struct deserialize_state
+	{
 		deserialize_result result;
-		std::optional<T> value;        // Only valid if result == success
+		std::optional<T> value; // Only valid if result == success
 	};
 
-	template<typename T>
-	class deserializer {
-	public:
-		// Main deserialization function
-		// ReSharper disable CppFunctionIsNotImplemented once
-		static deserialize_state<T> deserialize(packet_reader& buffer);
+	template <typename T>
+	inline deserialize_state<T> deserialize_success(T&& value)
+	{
+		return {deserialize_result::success, std::forward<T>(value)};
+	}
+
+	template <typename T>
+	concept deserializable = requires(packet_reader& r)
+	{
+		{ deserialize(r, std::type_identity<T>{}) } -> std::same_as<deserialize_state<T>>;
 	};
 
+	template <deserializable T>
+	deserialize_state<T> read(packet_reader& r)
+	{
+		return deserialize(r, std::type_identity<T>{});
+	}
 }
 
 #endif //DESERIALIZER_HPP
