@@ -5,7 +5,7 @@
 #include "packet_reader.hpp"
 
 namespace packet_io {
-	packet_reader::packet_reader(const std::span<std::byte> buffer)
+	packet_reader::packet_reader(const std::span<uint8_t> buffer)
 	{
 		_buffer = buffer;
 		_length = buffer.size();
@@ -26,13 +26,13 @@ namespace packet_io {
 		return value;
 	}
 
-	std::vector<std::byte> packet_reader::read(const std::size_t size)
+	std::vector<uint8_t> packet_reader::read(const std::size_t size)
 	{
 		if (_offset + size > _length) {
 			throw std::out_of_range("Buffer overflow in read");
 		}
 
-		std::vector<std::byte> data(size);
+		std::vector<uint8_t> data(size);
 		std::memcpy(data.data(), _buffer.data() + _offset, size);
 		_offset += size;
 		return data;

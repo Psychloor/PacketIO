@@ -10,10 +10,10 @@ namespace packet_io
 {
 	void packet_writer::write_raw(const void* data, const std::size_t size)
 	{
-		std::copy_n(static_cast<const std::byte*>(data), size, std::back_inserter(_buffer));
+		std::copy_n(static_cast<const uint8_t*>(data), size, std::back_inserter(_buffer));
 	}
 
-	void packet_writer::write(const std::byte value)
+	void packet_writer::write(const uint8_t value)
 	{
 		_buffer.push_back(value);
 	}

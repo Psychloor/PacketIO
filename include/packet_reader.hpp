@@ -13,7 +13,7 @@ namespace packet_io
 	class packet_reader : std::enable_shared_from_this<packet_reader>
 	{
 	public:
-		explicit packet_reader(std::span<std::byte> buffer);
+		explicit packet_reader(std::span<uint8_t> buffer);
 
 		template<typename T>
 		T read_le();
@@ -31,7 +31,7 @@ namespace packet_io
 		std::string read_string_be();
 
 		std::string read_cstring();
-		std::vector<std::byte> read(std::size_t size);
+		std::vector<uint8_t> read(std::size_t size);
 
 		size_t offset() const { return _offset; }
 
@@ -39,7 +39,7 @@ namespace packet_io
 		void read_raw(void* data, std::size_t size);
 
 
-		std::span<const std::byte> _buffer;
+		std::span<const uint8_t> _buffer;
 		size_t _offset;
 		size_t _length;
 	};

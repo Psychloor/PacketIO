@@ -35,15 +35,15 @@ namespace packet_io
 		void write(std::string_view value);
 
 		void write(const char* data, std::size_t size);
-		void write(std::byte value);
+		void write(uint8_t value);
 
 		size_t size() const { return _buffer.size(); }
-		const std::vector<std::byte>& buffer() const { return _buffer; }
+		const std::vector<uint8_t>& buffer() const { return _buffer; }
 
 	private:
 		void write_raw(const void* data, std::size_t size);
 
-		std::vector<std::byte> _buffer;
+		std::vector<uint8_t> _buffer;
 	};
 
 	template <typename T>
