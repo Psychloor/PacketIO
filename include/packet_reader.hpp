@@ -34,6 +34,7 @@ namespace packet_io
 		std::vector<uint8_t> read(std::size_t size);
 
 		size_t offset() const { return _offset; }
+		bool can_read(const std::size_t size) const { return _offset + size <= _length; }
 
 	private:
 		void read_raw(void* data, std::size_t size);

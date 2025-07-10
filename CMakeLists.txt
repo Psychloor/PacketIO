@@ -7,11 +7,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(HEADERS
         include/packet_writer.hpp
         include/packet_reader.hpp
+        include/deserializer.hpp
 )
 
 set(SOURCES
         src/packet_writer.cpp
         src/packet_reader.cpp
+
 )
 
 find_package(Boost REQUIRED)
