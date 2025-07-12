@@ -1,6 +1,6 @@
 ﻿// ReSharper disable CppDFAUnreachableCode
-#ifndef PACKET_BUFFERS_HPP
-#define PACKET_BUFFERS_HPP
+#ifndef PACKET_IO_READER_WRITER_HPP
+#define PACKET_IO_READER_WRITER_HPP
 
 #include <vector>
 #include <span>
@@ -240,4 +240,4 @@ namespace packet_io
 	};
 } // namespace net
 
-#endif // PACKET_BUFFERS_HPP
+#endif // PACKET_IO_READER_WRITER_HPP

@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(HEADERS
-        include/packet_buffers.hpp
+        include/packet_io.hpp
 )
 
 add_library(${PROJECT_NAME} INTERFACE ${HEADERS})
