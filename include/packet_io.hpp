@@ -1,6 +1,6 @@
 ﻿// ReSharper disable CppDFAUnreachableCode
-#ifndef PACKET_IO_READER_WRITER_HPP
-#define PACKET_IO_READER_WRITER_HPP
+#ifndef PSYCHLOOR_PACKET_IO_READER_WRITER_HPP
+#define PSYCHLOOR_PACKET_IO_READER_WRITER_HPP
 
 #include <vector>
 #include <span>
@@ -240,4 +240,4 @@ namespace packet_io
 	};
 } // namespace net
 
-#endif // PACKET_IO_READER_WRITER_HPP
+#endif // PSYCHLOOR_PACKET_IO_READER_WRITER_HPP
