@@ -1,6 +1,14 @@
 ﻿#ifndef FRAMED_PACKET_READER_HPP
 #define FRAMED_PACKET_READER_HPP
 
+#if defined(_MSC_VER)
+    #define PACKETIO_API __declspec(dllexport)
+#elif defined(__GNUC__) || defined(__clang__)
+    #define PACKETIO_API __attribute__((visibility("default")))
+#else
+    #define PACKETIO_API
+#endif
+
 #include <cstddef>
 #include <functional>
 #include <memory>
@@ -19,7 +27,7 @@ namespace net
     };
 
     template <typename T, typename E>
-    struct deserialization_result
+    struct PACKETIO_API deserialization_result
     {
         packet_parse_status status;
         std::optional<T> data;
@@ -27,14 +35,15 @@ namespace net
     };
 
     template <typename PacketType, typename Error>
-    class framed_packet_reader
+    class PACKETIO_API framed_packet_reader
     {
     public:
         using parse_result_t = deserialization_result<PacketType, Error>;
         using parser_fn_t = std::function<parse_result_t(packet_reader&)>;
 
         explicit framed_packet_reader(parser_fn_t parser,
-                                      const size_t initial_capacity = 1024, const size_t shrink_threshold = 16384U) :
+                                      const size_t initial_capacity = 1024,
+                                      const size_t shrink_threshold = 16384U) :
             shrink_threshold_(shrink_threshold), parser_(std::move(parser))
         {
             buffer_.reserve(initial_capacity);
@@ -77,7 +86,7 @@ namespace net
                     else
                         buffer_.erase(buffer_.begin(),
                                       buffer_.begin() +
-                                          static_cast<ptrdiff_t>(consumed));
+                                      static_cast<ptrdiff_t>(consumed));
 
                     if (buffer_.capacity() > shrink_threshold_ &&
                         buffer_.size() < (buffer_.capacity() >> 2))

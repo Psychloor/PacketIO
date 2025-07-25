@@ -2,6 +2,14 @@
 #ifndef PACKET_BUFFERS_HPP
 #define PACKET_BUFFERS_HPP
 
+#if defined(_MSC_VER)
+    #define PACKETIO_API __declspec(dllexport)
+#elif defined(__GNUC__) || defined(__clang__)
+    #define PACKETIO_API __attribute__((visibility("default")))
+#else
+    #define PACKETIO_API
+#endif
+
 #include <bit>
 #include <cstddef>
 #include <cstring>
@@ -31,7 +39,7 @@ namespace net
 
     // Base bytes struct with CRTP pattern
     template <typename Derived>
-    struct bytes_base : std::enable_shared_from_this<Derived>
+    struct PACKETIO_API bytes_base : std::enable_shared_from_this<Derived>
     {
         virtual ~bytes_base() = default;
         using byte = std::byte;
@@ -61,7 +69,7 @@ namespace net
     };
 
     // Immutable shared bytes implementation
-    struct shared_bytes final : bytes_base<shared_bytes>
+    struct PACKETIO_API shared_bytes final : bytes_base<shared_bytes>
     {
         explicit shared_bytes(std::vector<byte>&& data) : data_(std::move(data))
         {
@@ -93,7 +101,8 @@ namespace net
     // -----------------------------------------------------------
     // PacketWriter – append‑only binary buffer for outgoing packets.
     // -----------------------------------------------------------
-    class packet_writer : std::enable_shared_from_this<packet_writer>
+    class PACKETIO_API
+packet_writer : std::enable_shared_from_this<packet_writer>
     {
     public:
         // Constructor
@@ -167,7 +176,8 @@ namespace net
     // -----------------------------------------------------------
     // PacketReader – span‑based cursor for incoming data.
     // -----------------------------------------------------------
-    class packet_reader : std::enable_shared_from_this<packet_reader>
+    class PACKETIO_API
+ packet_reader : std::enable_shared_from_this<packet_reader>
     {
     public:
         // Constructors with deduction guides

@@ -1,3 +1,4 @@
+
 cmake_minimum_required(VERSION 3.31)
 project(PacketIO
         VERSION 1.0.0
@@ -10,6 +11,10 @@ option(PACKETIO_ENABLE_UNSAFE_READS "Enable unsafe reads in packet_reader" OFF)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+# Add visibility settings
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
 
 # Create a regular static library instead of INTERFACE
 add_library(${PROJECT_NAME} STATIC
