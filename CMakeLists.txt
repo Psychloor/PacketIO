@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.31)
 project(PacketIO
         VERSION 1.0.0
-        DESCRIPTION "A header-only packet I/O library"
+        DESCRIPTION "A packet I/O library"
         LANGUAGES CXX)
 
 option(PACKETIO_ENABLE_UNSAFE_READS "Enable unsafe reads in packet_reader" OFF)
@@ -11,20 +11,22 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Create header-only INTERFACE library
-add_library(${PROJECT_NAME} INTERFACE
+# Create a regular static library instead of INTERFACE
+add_library(${PROJECT_NAME} STATIC
+        src/packet_buffers.cpp
         include/framed_packet_reader.hpp
         include/packet_buffers.hpp
 )
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 # Set include directories
-target_include_directories(${PROJECT_NAME} INTERFACE
+target_include_directories(${PROJECT_NAME}
+        PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
 )
 
-target_compile_definitions(${PROJECT_NAME} INTERFACE
+target_compile_definitions(${PROJECT_NAME} PUBLIC
         $<$<BOOL:${PACKETIO_ENABLE_UNSAFE_READS}>:PACKETIO_ENABLE_UNSAFE_READS>
 )
 

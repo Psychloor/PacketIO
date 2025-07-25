@@ -1,10 +1,9 @@
 # PacketIO
 
-A modern C++23 header-only library for efficient packet handling and binary serialization. PacketIO provides robust utilities for reading and writing binary data with built-in endianness support.
+A modern C++23 library for efficient packet handling and binary serialization. PacketIO provides robust utilities for reading and writing binary data with built-in endianness support.
 
 ## Features
 
-- Header-only library — include and use
 - Modern C++23 implementation
 - Endian-aware reading and writing (LE/BE)
 - Zero-copy optimizations where possible
@@ -25,9 +24,9 @@ A modern C++23 header-only library for efficient packet handling and binary seri
 include(FetchContent)
 
 FetchContent_Declare(
-        PacketIO
-        GIT_REPOSITORY https://github.com/Psychloor/PacketIO.git
-        GIT_TAG main
+PacketIO
+GIT_REPOSITORY https://github.com/Psychloor/PacketIO.git
+GIT_TAG main
 )
 FetchContent_MakeAvailable(PacketIO)
 
@@ -43,6 +42,18 @@ git clone https://github.com/Psychloor/PacketIO.git
 ```cmake
 add_subdirectory(PacketIO)
 target_link_libraries(your_target PRIVATE PacketIO::PacketIO)
+```
+### Building from Source
+
+1. Clone the repository
+2. Create a build directory:
+```shell
+mkdir build && cd build
+```
+3. Configure and build:
+```shell
+cmake ..
+cmake --build .
 ```
 ## Quick Start
 ```cpp
@@ -61,10 +72,10 @@ auto value2 = reader.read_be<uint16_t>(); // Read big-endian integer
 
 // Framed packet handling
 net::framed_packet_reader<MyPacket, MyError> packet_reader(
-    [](net::packet_reader& reader) {
-        // Your packet parsing logic here
-        return parse_result;
-    }
+[](net::packet_reader& reader) {
+// Your packet parsing logic here
+return parse_result;
+}
 );
 ```
 ### Framed Reader Example
@@ -76,12 +87,12 @@ net::framed_packet_reader<packet_ptr, std::string> reader(
 
 // In your connection handling loop
 std::vector<std::byte> incoming(2048);
-while (socket.is_open()) 
+while (socket.is_open())
 {
-    // Read data from socket
-    const size_t bytes_read = co_await socket.async_receive(
-        buffer(incoming), use_awaitable);
-    
+// Read data from socket
+const size_t bytes_read = co_await socket.async_receive(
+buffer(incoming), use_awaitable);
+
     // Append new data to the reader
     reader.append(incoming.data(), bytes_read);
     
@@ -106,7 +117,6 @@ while (socket.is_open())
     }
 }
 ```
-
 ## Core Components
 
 ### PacketWriter
@@ -153,6 +163,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
 
 ## Contributing
 

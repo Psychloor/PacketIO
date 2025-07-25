@@ -99,11 +99,11 @@ namespace net
         // Constructor
         constexpr packet_writer() noexcept = default;
 
-        constexpr void reserve(const size_t bytes) { buffer_.reserve(bytes); }
+        void reserve(const size_t bytes);
 
         template <typename T>
             requires std::is_trivially_copyable_v<T>
-        constexpr void write(const T& value)
+        void write(const T& value)
         {
             const auto bytes = std::as_bytes(std::span{&value, 1});
             write_bytes(bytes);
@@ -117,17 +117,9 @@ namespace net
             write_bytes(bytes);
         }
 
-        constexpr void write_bytes(std::span<const byte> bytes)
-        {
-            buffer_.insert(std::end(buffer_), bytes.begin(), bytes.end());
-        }
+        void write_bytes(std::span<const byte> bytes);
 
-        void emplace_bytes(std::vector<std::byte>&& data)
-        {
-            buffer_.insert(buffer_.end(),
-                           std::make_move_iterator(data.begin()),
-                           std::make_move_iterator(data.end()));
-        }
+        void emplace_bytes(std::vector<std::byte>&& data);
 
         template <typename T>
             requires std::is_integral_v<T>
@@ -160,16 +152,10 @@ namespace net
 
         // Transfer ownership of the buffer to shared_bytes for downstream async
         // use
-        [[nodiscard]] shared_bytes_ptr to_shared() &&
-        {
-            return make_shared_bytes(std::move(buffer_));
-        }
+        [[nodiscard]] shared_bytes_ptr to_shared() &&;
 
         // Efficient append from shared_bytes
-        void append_bytes(const shared_bytes& bytes)
-        {
-            write_bytes(bytes.view());
-        }
+        void append_bytes(const shared_bytes& bytes);
 
 
         constexpr void clear() noexcept { buffer_.clear(); }
@@ -185,10 +171,8 @@ namespace net
     {
     public:
         // Constructors with deduction guides
-        constexpr explicit packet_reader(
-            const std::span<const std::byte> data) noexcept : data_(data)
-        {
-        }
+        explicit packet_reader(
+        std::span<const std::byte> data) noexcept;
 
         // Core reading operations with std::expected for error handling
         template <typename T>
@@ -264,25 +248,7 @@ namespace net
         }
 
         [[nodiscard]] std::expected<std::string, std::error_code>
-        read_c_string()
-        {
-            auto rem = remaining();
-            const auto null_pos = std::ranges::find(rem, std::byte{0});
-
-            if (null_pos == rem.end())
-            {
-                // No null terminator in the current buffer
-                return std::unexpected(
-                    std::make_error_code(std::errc::invalid_argument));
-            }
-
-            const auto offset = static_cast<size_t>(null_pos - rem.begin());
-
-            std::string str{reinterpret_cast<const char*>(rem.data()), offset};
-
-            consumed_ += offset + 1; // +1 to skip the null terminator
-            return std::move(str);
-        }
+        read_c_string();
 
         [[nodiscard]] constexpr std::expected<std::string, std::error_code>
         read_c_string_limited(const size_t max_len)
