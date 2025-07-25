@@ -5,7 +5,8 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(HEADERS
-        include/packet_io.hpp
+        include/framed_packet_reader.hpp
+        include/packet_buffers.hpp
 )
 
 add_library(${PROJECT_NAME} INTERFACE ${HEADERS})
