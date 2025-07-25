@@ -14,6 +14,10 @@ A modern C++23 library for efficient packet handling and binary serialization. P
 
 ## Requirements
 
+- Modern C++23 compiler with full support for C++23 features:
+    - MSVC 2022 17.8 or newer
+    - GCC 13.2 or newer
+    - Clang is currently not supported due to incomplete C++23 feature support
 - C++23 compatible compiler
 - CMake 3.31 or higher
 

@@ -16,12 +16,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
 
-# Check compiler and add necessary flags
-if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    add_compile_options(-stdlib=libc++)
-    add_link_options(-stdlib=libc++)
-endif()
-
 # Create a regular static library instead of INTERFACE
 add_library(${PROJECT_NAME} STATIC
         src/packet_buffers.cpp
