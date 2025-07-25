@@ -28,10 +28,6 @@ target_compile_definitions(${PROJECT_NAME} INTERFACE
         $<$<BOOL:${PACKETIO_ENABLE_UNSAFE_READS}>:PACKETIO_ENABLE_UNSAFE_READS>
 )
 
-# to get formatting (comment out upon git commit)
-#add_executable(test_packetio main.cpp)
-#target_link_libraries(test_packetio PRIVATE PacketIO::PacketIO)
-
 # Installation rules
 include(GNUInstallDirs)
 
