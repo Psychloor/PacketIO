@@ -1,3 +1,5 @@
+[![CMake C++23 Compatible](https://github.com/Psychloor/PacketIO/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/Psychloor/PacketIO/actions/workflows/cmake-multi-platform.yml)
+
 # PacketIO
 
 A modern C++23 library for efficient packet handling and binary serialization. PacketIO provides robust utilities for reading and writing binary data with built-in endianness support.
