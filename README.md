@@ -26,7 +26,7 @@ include(FetchContent)
 
 FetchContent_Declare(
         PacketIO
-        GIT_REPOSITORY https://github.com/yourusername/PacketIO.git
+        GIT_REPOSITORY https://github.com/Psychloor/PacketIO.git
         GIT_TAG main
 )
 FetchContent_MakeAvailable(PacketIO)
@@ -37,7 +37,7 @@ target_link_libraries(your_target PRIVATE PacketIO::PacketIO)
 
 1. Clone the repository:
 ```shell
-git clone https://github.com/yourusername/PacketIO.git
+git clone https://github.com/Psychloor/PacketIO.git
 ```
 2. Add to your CMake project:
 ```cmake
