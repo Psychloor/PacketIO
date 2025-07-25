@@ -34,8 +34,8 @@ namespace net
         using parser_fn_t = std::function<parse_result_t(packet_reader&)>;
 
         explicit framed_packet_reader(parser_fn_t parser,
-                                      const size_t initial_capacity = 1024) :
-            parser_(std::move(parser))
+                                      const size_t initial_capacity = 1024, const size_t shrink_threshold = 16384U) :
+            shrink_threshold_(shrink_threshold), parser_(std::move(parser))
         {
             buffer_.reserve(initial_capacity);
         }
@@ -79,7 +79,7 @@ namespace net
                                       buffer_.begin() +
                                           static_cast<ptrdiff_t>(consumed));
 
-                    if (buffer_.capacity() > 16384U &&
+                    if (buffer_.capacity() > shrink_threshold_ &&
                         buffer_.size() < (buffer_.capacity() >> 2))
                         buffer_.shrink_to_fit();
                 }
@@ -88,8 +88,14 @@ namespace net
             return result;
         }
 
+        void set_shrink_threshold(const size_t threshold)
+        {
+            shrink_threshold_ = threshold;
+        }
+
     private:
         std::vector<std::byte> buffer_;
+        size_t shrink_threshold_ = 16384U;
         parser_fn_t parser_;
     };
 } // namespace net

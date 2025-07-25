@@ -4,19 +4,18 @@ project(PacketIO
         DESCRIPTION "A header-only packet I/O library"
         LANGUAGES CXX)
 
+option(PACKETIO_ENABLE_UNSAFE_READS "Enable unsafe reads in packet_reader" OFF)
+
 # Specify C++23 standard
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Define header files
-set(HEADERS
+# Create header-only INTERFACE library
+add_library(${PROJECT_NAME} INTERFACE
         include/framed_packet_reader.hpp
         include/packet_buffers.hpp
 )
-
-# Create header-only INTERFACE library
-add_library(${PROJECT_NAME} INTERFACE)
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 # Set include directories
@@ -24,6 +23,14 @@ target_include_directories(${PROJECT_NAME} INTERFACE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
 )
+
+target_compile_definitions(${PROJECT_NAME} INTERFACE
+        $<$<BOOL:${PACKETIO_ENABLE_UNSAFE_READS}>:PACKETIO_ENABLE_UNSAFE_READS>
+)
+
+# to get formatting (comment out upon git commit)
+#add_executable(test_packetio main.cpp)
+#target_link_libraries(test_packetio PRIVATE PacketIO::PacketIO)
 
 # Installation rules
 include(GNUInstallDirs)

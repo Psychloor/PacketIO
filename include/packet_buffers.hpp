@@ -109,9 +109,24 @@ namespace net
             write_bytes(bytes);
         }
 
+        template <typename T>
+            requires std::is_trivially_copyable_v<T>
+        void write_array(const T* ptr, size_t count)
+        {
+            const auto bytes = std::as_bytes(std::span{ptr, count});
+            write_bytes(bytes);
+        }
+
         constexpr void write_bytes(std::span<const byte> bytes)
         {
             buffer_.insert(std::end(buffer_), bytes.begin(), bytes.end());
+        }
+
+        void emplace_bytes(std::vector<std::byte>&& data)
+        {
+            buffer_.insert(buffer_.end(),
+                           std::make_move_iterator(data.begin()),
+                           std::make_move_iterator(data.end()));
         }
 
         template <typename T>
@@ -127,8 +142,9 @@ namespace net
             requires std::is_integral_v<T>
         constexpr void write_be(T v)
         {
-            write(std::endian::native == std::endian::big ? v
-                                                          : std::byteswap(v));
+            write(std::endian::native == std::endian::big
+                      ? v
+                      : std::byteswap(v));
         }
 
         // Accessors
@@ -302,7 +318,8 @@ namespace net
                     return std::string{
                         reinterpret_cast<const char*>(bytes->data()),
                         static_cast<unsigned long long>(
-                            std::distance(bytes->begin(), null_pos))};
+                            std::distance(bytes->begin(), null_pos))
+                    };
                 }
             }
             return std::unexpected(
@@ -316,7 +333,8 @@ namespace net
             if (!bytes)
                 return std::unexpected(bytes.error());
             return std::string_view{
-                reinterpret_cast<const char*>(bytes->data()), bytes->size()};
+                reinterpret_cast<const char*>(bytes->data()), bytes->size()
+            };
         }
 
 
@@ -347,9 +365,11 @@ namespace net
 
         [[nodiscard]] constexpr std::span<const byte> remaining() const noexcept
         {
-            return std::span{std::begin(data_) +
-                                 static_cast<ptrdiff_t>(consumed_),
-                             data_.size_bytes() - consumed_};
+            return std::span{
+                std::begin(data_) +
+                static_cast<ptrdiff_t>(consumed_),
+                data_.size_bytes() - consumed_
+            };
         }
 
         [[nodiscard]] constexpr size_t bytes_read() const noexcept
@@ -364,6 +384,40 @@ namespace net
 
         // Reset the reader to the beginning of the buffer
         constexpr void reset() noexcept { consumed_ = 0; }
+
+#ifdef PACKETIO_ENABLE_UNSAFE_READS
+        template <typename T>
+            requires std::is_trivially_copyable_v<T>
+        [[nodiscard]] T read_unsafe()
+        {
+            T value;
+            std::memcpy(&value, data_.data() + consumed_, sizeof(T));
+            consumed_ += sizeof(T);
+            return value;
+        }
+
+        template <typename T>
+            requires std::is_integral_v<T>
+        [[nodiscard]] T read_le_unsafe()
+        {
+            auto val = read_unsafe<T>();
+            if constexpr (std::endian::native == std::endian::little)
+                return val;
+            else
+                return std::byteswap(val);
+        }
+
+        template <typename T>
+            requires std::is_integral_v<T>
+        [[nodiscard]] T read_be_unsafe()
+        {
+            auto val = read_unsafe<T>();
+            if constexpr (std::endian::native == std::endian::big)
+                return val;
+            else
+                return std::byteswap(val);
+        }
+#endif
 
     private:
         std::span<const byte> data_;
