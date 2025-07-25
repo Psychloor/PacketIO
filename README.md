@@ -67,6 +67,46 @@ net::framed_packet_reader<MyPacket, MyError> packet_reader(
     }
 );
 ```
+### Framed Reader Example
+```cpp
+// Define your packet reader
+net::framed_packet_reader<packet_ptr, std::string> reader(
+    packet::read_from  // Your packet parsing function
+);
+
+// In your connection handling loop
+std::vector<std::byte> incoming(2048);
+while (socket.is_open()) 
+{
+    // Read data from socket
+    const size_t bytes_read = co_await socket.async_receive(
+        buffer(incoming), use_awaitable);
+    
+    // Append new data to the reader
+    reader.append(incoming.data(), bytes_read);
+    
+    // Process all complete packets in the buffer
+    while (true) 
+    {
+        const auto [status, data, error] = reader.try_read_packet();
+        
+        if (status == net::packet_parse_status::partial) {
+            // Need more data
+            break;
+        }
+        
+        if (status == net::packet_parse_status::error) {
+            // Handle error
+            std::cerr << "Parse error: " << error.value_or("Unknown error") << std::endl;
+            return;
+        }
+        
+        // Handle the complete packet
+        handle_packet(std::move(*data));
+    }
+}
+```
+
 ## Core Components
 
 ### PacketWriter
